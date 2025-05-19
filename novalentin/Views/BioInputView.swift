@@ -3,7 +3,7 @@ import SwiftUI
 struct BioInputView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var bio = ""
-    @State private var showNextScreen = false
+    @State private var showMainView = false
     @FocusState private var isBioFocused: Bool
     
     private let maxCharacters = 500
@@ -111,7 +111,7 @@ struct BioInputView: View {
                 
                 // Continue Button
                 Button(action: {
-                    showNextScreen = true
+                    showMainView = true
                 }) {
                     Text("Continue")
                         .font(.system(size: 17, weight: .semibold))
@@ -129,7 +129,9 @@ struct BioInputView: View {
         .onAppear {
             isBioFocused = true
         }
-        // TODO: Add navigation to next screen when showNextScreen is true
+        .fullScreenCover(isPresented: $showMainView) {
+            MainTabView()
+        }
     }
 }
 
