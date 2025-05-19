@@ -7,6 +7,9 @@
 
 import SwiftUI
 import SwiftData
+import FirebaseCore
+import FirebaseAuth  // if you're using Auth
+
 
 @main
 struct NoValentinApp: App {
@@ -15,4 +18,6 @@ struct NoValentinApp: App {
             WelcomeView()
         }
     }
+    
+
 }
