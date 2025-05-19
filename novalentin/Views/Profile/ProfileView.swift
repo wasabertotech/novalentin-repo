@@ -1,6 +1,24 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @State private var currentUser = UserProfile(
+        name: "Alex",
+        age: 25,
+        city: "Barcelona",
+        bio: """
+            Photography enthusiast and coffee lover. Always looking for new perspectives and interesting conversations.
+            
+            Interests:
+            • Street photography
+            • Coffee brewing
+            • Urban exploration
+            • Modern art
+            
+            Let's share stories and create new ones together!
+            """,
+        images: ["user1", "user2", "user3", "user4"]
+    )
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -21,11 +39,11 @@ struct ProfileView: View {
                                 )
                             
                             VStack(spacing: 4) {
-                                Text("Your Name, 25")
+                                Text("\(currentUser.name), \(currentUser.age)")
                                     .font(.system(size: 24, weight: .bold))
                                     .foregroundColor(AppColors.textPrimary)
                                 
-                                Text("Your Bio Preview...")
+                                Text(currentUser.city)
                                     .font(.system(size: 17))
                                     .foregroundColor(AppColors.textSecondary)
                             }
@@ -34,9 +52,37 @@ struct ProfileView: View {
                         
                         // Profile Actions
                         VStack(spacing: 16) {
-                            ProfileActionButton(title: "Edit Profile", icon: "pencil")
-                            ProfileActionButton(title: "Settings", icon: "gear")
-                            ProfileActionButton(title: "Help & Support", icon: "questionmark.circle")
+                            NavigationLink(destination: ProfilePreviewView(profile: currentUser)) {
+                                ProfileActionButton(
+                                    title: "Preview Profile",
+                                    icon: "eye",
+                                    showChevron: true
+                                )
+                            }
+                            
+                            NavigationLink(destination: Text("Edit Profile")) {
+                                ProfileActionButton(
+                                    title: "Edit Profile",
+                                    icon: "pencil",
+                                    showChevron: true
+                                )
+                            }
+                            
+                            NavigationLink(destination: Text("Settings")) {
+                                ProfileActionButton(
+                                    title: "Settings",
+                                    icon: "gear",
+                                    showChevron: true
+                                )
+                            }
+                            
+                            NavigationLink(destination: Text("Help & Support")) {
+                                ProfileActionButton(
+                                    title: "Help & Support",
+                                    icon: "questionmark.circle",
+                                    showChevron: true
+                                )
+                            }
                         }
                         .padding(.horizontal, 20)
                     }
@@ -51,30 +97,31 @@ struct ProfileView: View {
 struct ProfileActionButton: View {
     let title: String
     let icon: String
+    var showChevron: Bool = true
     
     var body: some View {
-        Button(action: {}) {
-            HStack {
-                Image(systemName: icon)
-                    .font(.system(size: 20))
-                    .foregroundColor(AppColors.navarraBlue)
-                    .frame(width: 30)
-                
-                Text(title)
-                    .font(.system(size: 17))
-                    .foregroundColor(AppColors.textPrimary)
-                
-                Spacer()
-                
+        HStack {
+            Image(systemName: icon)
+                .font(.system(size: 20))
+                .foregroundColor(AppColors.navarraBlue)
+                .frame(width: 30)
+            
+            Text(title)
+                .font(.system(size: 17))
+                .foregroundColor(AppColors.textPrimary)
+            
+            Spacer()
+            
+            if showChevron {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(AppColors.textSecondary)
             }
-            .padding()
-            .background(Color.white)
-            .cornerRadius(12)
-            .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
         }
+        .padding()
+        .background(Color.white)
+        .cornerRadius(12)
+        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
     }
 }
 
