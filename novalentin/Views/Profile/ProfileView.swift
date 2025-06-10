@@ -70,14 +70,6 @@ struct ProfileView: View {
                                 )
                             }
                             
-                            NavigationLink(destination: Text("Settings")) {
-                                ProfileActionButton(
-                                    title: "Settings",
-                                    icon: "gear",
-                                    showChevron: true
-                                )
-                            }
-                            
                             NavigationLink(destination: ContactView()) {
                                 ProfileActionButton(
                                     title: "Contact Us",
