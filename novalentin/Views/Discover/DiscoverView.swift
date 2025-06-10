@@ -135,6 +135,8 @@ struct PhotoCarouselView: View {
 struct ProfileCardView: View {
     let profile: UserProfile
     @State private var currentImageIndex = 0
+    @State private var showActionSheet = false
+    @State private var showReportSheet = false
     
     var body: some View {
         ZStack {
@@ -143,10 +145,38 @@ struct ProfileCardView: View {
                 .shadow(radius: 5)
             
             VStack(spacing: 0) {
-                // Photo Carousel
-                PhotoCarouselView(images: profile.images, currentImageIndex: $currentImageIndex)
-                    .frame(height: 400)
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                // Photo Carousel with Action Buttons
+                ZStack(alignment: .topTrailing) {
+                    PhotoCarouselView(images: profile.images, currentImageIndex: $currentImageIndex)
+                        .frame(height: 400)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                    
+                    // Block and Report Buttons
+                    HStack(spacing: 12) {
+                        Button(action: {
+                            showReportSheet = true
+                        }) {
+                            Image(systemName: "flag.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(.white)
+                                .frame(width: 36, height: 36)
+                                .background(Color.black.opacity(0.5))
+                                .clipShape(Circle())
+                        }
+                        
+                        Button(action: {
+                            showActionSheet = true
+                        }) {
+                            Image(systemName: "hand.raised.fill")
+                                .font(.system(size: 20))
+                                .foregroundColor(.white)
+                                .frame(width: 36, height: 36)
+                                .background(Color.black.opacity(0.5))
+                                .clipShape(Circle())
+                        }
+                    }
+                    .padding(16)
+                }
                 
                 // Profile Info
                 ScrollView {
@@ -180,6 +210,32 @@ struct ProfileCardView: View {
             }
         }
         .frame(height: 550)
+        .confirmationDialog("Block User", isPresented: $showActionSheet, titleVisibility: .visible) {
+            Button("Block \(profile.name)", role: .destructive) {
+                // Implement block functionality
+                print("Blocked \(profile.name)")
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This user will no longer be able to see your profile or contact you.")
+        }
+        .confirmationDialog("Report User", isPresented: $showReportSheet, titleVisibility: .visible) {
+            Button("Inappropriate Content", role: .destructive) {
+                // Implement report functionality
+                print("Reported \(profile.name) for inappropriate content")
+            }
+            Button("Harassment", role: .destructive) {
+                // Implement report functionality
+                print("Reported \(profile.name) for harassment")
+            }
+            Button("Fake Profile", role: .destructive) {
+                // Implement report functionality
+                print("Reported \(profile.name) for fake profile")
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Why are you reporting this profile?")
+        }
     }
 }
 
@@ -194,8 +250,9 @@ struct DiscoverView: View {
                 AppColors.background
                     .ignoresSafeArea()
                 
-                VStack(spacing: 20) {
+                VStack(spacing: 0) {
                     if !profiles.isEmpty {
+                        // Profile Cards Stack
                         ZStack {
                             ForEach(profiles.indices.prefix(2).reversed(), id: \.self) { index in
                                 ProfileCardView(profile: profiles[index])
@@ -221,8 +278,12 @@ struct DiscoverView: View {
                                     )
                             }
                         }
+                        .frame(height: UIScreen.main.bounds.height * 0.65)
+                        .padding(.top, 10)
                         
-                        // Action Buttons - Only show when there are profiles
+                        Spacer()
+                        
+                        // Action Buttons
                         HStack(spacing: 40) {
                             actionButton(systemName: "xmark", color: .red) {
                                 handleSwipe(-500)
@@ -232,7 +293,7 @@ struct DiscoverView: View {
                                 handleSwipe(500)
                             }
                         }
-                        .padding(.top, 20)
+                        .padding(.bottom, 30)
                     } else {
                         // No profiles view - Centered in the screen
                         VStack(spacing: 16) {

@@ -6,14 +6,6 @@ struct WelcomeView: View {
     
     private func formatPhoneNumber(_ number: String) -> String {
         let cleaned = number.filter { $0.isNumber }
-        if cleaned.count > 10 {
-            return String(cleaned.prefix(10))
-        }
-        return cleaned
-    }
-    
-    private var formattedPhoneNumber: String {
-        let cleaned = phoneNumber.filter { $0.isNumber }
         var result = ""
         
         for (index, char) in cleaned.enumerated() {
@@ -24,7 +16,7 @@ struct WelcomeView: View {
                 result.append(") ")
             }
             if index == 6 {
-                result.append("-")
+                result.append(" - ")
             }
             result.append(char)
         }
@@ -39,7 +31,7 @@ struct WelcomeView: View {
                 
                 VStack(spacing: 30) {
                     // App Logo
-                    Image(systemName: "heart.fill")
+                    Image(systemName: "square.fill")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 80, height: 80)
@@ -66,7 +58,7 @@ struct WelcomeView: View {
                                 .foregroundColor(AppColors.textPrimary)
                                 .font(.system(size: 17, weight: .medium))
                             
-                            TextField("(555) 555-5555", text: $phoneNumber)
+                            TextField("(123) 456 - 7890", text: $phoneNumber)
                                 .keyboardType(.numberPad)
                                 .font(.system(size: 17))
                                 .padding()
@@ -74,7 +66,11 @@ struct WelcomeView: View {
                                 .cornerRadius(12)
                                 .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                                 .onChange(of: phoneNumber) { newValue in
-                                    phoneNumber = formatPhoneNumber(newValue)
+                                    let filtered = newValue.filter { $0.isNumber }
+                                    if filtered.count > 10 {
+                                        phoneNumber = String(filtered.prefix(10))
+                                    }
+                                    phoneNumber = formatPhoneNumber(filtered)
                                 }
                         }
                         .padding(.horizontal, 20)
@@ -108,7 +104,7 @@ struct WelcomeView: View {
             }
             .navigationBarHidden(true)
             .fullScreenCover(isPresented: $showVerification) {
-                VerificationView(phoneNumber: formattedPhoneNumber)
+                VerificationView(phoneNumber: phoneNumber)
             }
         }
     }

@@ -8,28 +8,7 @@ struct ReceivedLike: Identifiable {
 }
 
 struct LikesView: View {
-    @State private var receivedLikes: [ReceivedLike] = [
-        // Sample data
-        ReceivedLike(
-            profile: UserProfile(
-                name: "Isabella",
-                age: 26,
-                city: "Sevilla",
-                bio: """
-                    Professional dancer and dance instructor. I believe in expressing emotions through movement and finding joy in every step of life.
-                    
-                    When I'm not in the dance studio, I love:
-                    • Exploring local food markets
-                    • Practicing yoga
-                    • Reading contemporary literature
-                    • Learning new dance styles
-                    
-                    Looking for someone who appreciates art, movement, and isn't afraid to step onto the dance floor!
-                    """,
-                images: ["isabella1", "isabella2", "isabella3"]
-            ),
-            timestamp: Date().addingTimeInterval(-3600)
-        ),
+    @State private var receivedLikes = [
         ReceivedLike(
             profile: UserProfile(
                 name: "Marco",
@@ -61,13 +40,14 @@ struct LikesView: View {
                 AppColors.background
                     .ignoresSafeArea()
                 
-                VStack(spacing: 16) {
+                VStack(spacing: 0) {
                     if !receivedLikes.isEmpty {
                         // Header with likes count
                         Text("\(receivedLikes.count) people like you")
                             .font(.system(size: 22, weight: .semibold))
                             .foregroundColor(AppColors.textPrimary)
                             .padding(.top, 8)
+                            .padding(.bottom, 10)
                         
                         // Profile cards stack
                         ZStack {
@@ -93,19 +73,41 @@ struct LikesView: View {
                                     )
                             }
                         }
-                        .padding(.bottom, 8)
+                        .frame(height: UIScreen.main.bounds.height * 0.65)
+                        
+                        Spacer()
                         
                         // Action Buttons
                         HStack(spacing: 40) {
-                            actionButton(systemName: "xmark", color: .red) {
-                                handleSwipe(-500)
+                            Button(action: {
+                                withAnimation {
+                                    handleSwipe(-500)
+                                }
+                            }) {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 24, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .frame(width: 64, height: 64)
+                                    .background(Color.red)
+                                    .clipShape(Circle())
+                                    .shadow(radius: 5)
                             }
                             
-                            actionButton(systemName: "heart.fill", color: AppColors.navarraBlue) {
-                                handleSwipe(500)
+                            Button(action: {
+                                withAnimation {
+                                    handleSwipe(500)
+                                }
+                            }) {
+                                Image(systemName: "heart.fill")
+                                    .font(.system(size: 24, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .frame(width: 64, height: 64)
+                                    .background(AppColors.navarraBlue)
+                                    .clipShape(Circle())
+                                    .shadow(radius: 5)
                             }
                         }
-                        .padding(.bottom, 24)
+                        .padding(.bottom, 30)
                         
                     } else {
                         // No likes view
@@ -125,10 +127,8 @@ struct LikesView: View {
                                 .padding(.horizontal)
                         }
                         .frame(maxHeight: .infinity)
-                        .padding(.bottom, 24)
                     }
                 }
-                .padding(.top, 8)
             }
             .navigationTitle("Likes")
             .navigationBarTitleDisplayMode(.inline)
@@ -155,18 +155,6 @@ struct LikesView: View {
         }
         
         gestureTranslation = 0
-    }
-    
-    private func actionButton(systemName: String, color: Color, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: systemName)
-                .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.white)
-                .frame(width: 64, height: 64)
-                .background(color)
-                .clipShape(Circle())
-                .shadow(radius: 5)
-        }
     }
 }
 

@@ -2,12 +2,12 @@ import SwiftUI
 
 struct ChatDetailView: View {
     let match: Match
-    @State private var messageText = ""
     @State private var messages: [ChatMessage] = []
+    @State private var messageText = ""
+    @State private var currentUserId = UUID() // Simulated current user ID
     @FocusState private var isInputFocused: Bool
-    
-    // Sample user ID (in a real app, this would come from authentication)
-    let currentUserId = UUID()
+    @State private var showActionSheet = false
+    @State private var showReportSheet = false
     
     init(match: Match) {
         self.match = match
@@ -78,15 +78,75 @@ struct ChatDetailView: View {
                 .background(Color.white)
             }
         }
-        .navigationTitle(match.profile.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            // Title (User's name and profile link)
+            ToolbarItem(placement: .principal) {
                 NavigationLink(destination: MatchProfileView(profile: match.profile)) {
-                    Image(systemName: "info.circle")
-                        .foregroundColor(AppColors.navarraBlue)
+                    HStack(spacing: 8) {
+                        // Profile Image
+                        Circle()
+                            .fill(AppColors.navarraBlue.opacity(0.2))
+                            .frame(width: 32, height: 32)
+                            .overlay(
+                                Image(systemName: "person.fill")
+                                    .foregroundColor(AppColors.navarraBlue)
+                                    .font(.system(size: 16))
+                            )
+                        
+                        Text(match.profile.name)
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(AppColors.textPrimary)
+                    }
                 }
             }
+            
+            // Block and Report buttons
+            ToolbarItem(placement: .navigationBarTrailing) {
+                HStack(spacing: 16) {
+                    Button(action: {
+                        showReportSheet = true
+                    }) {
+                        Image(systemName: "flag.fill")
+                            .font(.system(size: 16))
+                            .foregroundColor(AppColors.textSecondary)
+                    }
+                    
+                    Button(action: {
+                        showActionSheet = true
+                    }) {
+                        Image(systemName: "hand.raised.fill")
+                            .font(.system(size: 16))
+                            .foregroundColor(AppColors.textSecondary)
+                    }
+                }
+            }
+        }
+        .confirmationDialog("Block User", isPresented: $showActionSheet, titleVisibility: .visible) {
+            Button("Block \(match.profile.name)", role: .destructive) {
+                // Implement block functionality
+                print("Blocked \(match.profile.name)")
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This user will no longer be able to see your profile or contact you.")
+        }
+        .confirmationDialog("Report User", isPresented: $showReportSheet, titleVisibility: .visible) {
+            Button("Inappropriate Messages", role: .destructive) {
+                // Implement report functionality
+                print("Reported \(match.profile.name) for inappropriate messages")
+            }
+            Button("Harassment", role: .destructive) {
+                // Implement report functionality
+                print("Reported \(match.profile.name) for harassment")
+            }
+            Button("Spam", role: .destructive) {
+                // Implement report functionality
+                print("Reported \(match.profile.name) for spam")
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Why are you reporting this user?")
         }
     }
     

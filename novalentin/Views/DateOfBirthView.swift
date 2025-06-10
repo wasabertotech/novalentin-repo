@@ -91,7 +91,7 @@ struct DateOfBirthView: View {
             UnderageView()
         }
         .fullScreenCover(isPresented: $showNameInput) {
-            NameInputView()
+            SubscriptionView()
         }
     }
 }
